@@ -1,0 +1,150 @@
+//@version=6
+strategy(
+     "Ultimate Breakout System — XAUUSD Port v0.1",
+     shorttitle = "UBS XAU v0.1",
+     overlay = true,
+     pyramiding = 0,
+     calc_on_every_tick = true,
+     process_orders_on_close = false,
+     initial_capital = 10000,
+     default_qty_type = strategy.percent_of_equity,
+     default_qty_value = 1
+)
+
+// ============================================================================
+// ULTIMATE BREAKOUT SYSTEM
+// TradingView / Pine Script v6 Port
+//
+// Purpose:
+// - Rebuild the core breakout logic of the MQL5 EA for TradingView.
+// - This is NOT a byte-for-byte MT5 conversion.
+// - Broker/account/MQL5-specific APIs are intentionally excluded.
+//
+// Initial target:
+// - XAUUSD
+// - Support / Resistance breakout
+// - ATR volatility breakout
+// - Preventive false-breakout filtering
+// - SL / TP
+// - Break-even
+// - Trailing stop
+// - Visual levels
+// - Alerts
+// ============================================================================
+
+
+// ============================================================================
+// 1. GENERAL
+// ============================================================================
+
+const string G_GENERAL = "01 — General"
+
+bool allowLong =
+     input.bool(true, "Allow Long", group = G_GENERAL)
+
+bool allowShort =
+     input.bool(true, "Allow Short", group = G_GENERAL)
+
+string engineMode =
+     input.string(
+         "Support / Resistance",
+         "Engine",
+         options = [
+             "Support / Resistance",
+             "Volatility Breakout"
+         ],
+         group = G_GENERAL
+     )
+
+
+// ============================================================================
+// 2. SUPPORT / RESISTANCE BREAKOUT
+// ============================================================================
+
+const string G_SR = "02 — Support / Resistance Breakout"
+
+int leftStrength =
+     input.int(
+         2,
+         "Pivot Left Strength",
+         minval = 1,
+         group = G_SR
+     )
+
+int rightStrength =
+     input.int(
+         2,
+         "Pivot Right Strength",
+         minval = 1,
+         group = G_SR
+     )
+
+int maxPivotAge =
+     input.int(
+         250,
+         "Maximum Pivot Age",
+         minval = 1,
+         group = G_SR
+     )
+
+float minDistance =
+     input.float(
+         0.90,
+         "Minimum Price Distance From Pivot",
+         minval = 0.0,
+         step = 0.01,
+         group = G_SR,
+         tooltip =
+             "สำหรับ XAUUSD ใช้เป็นระยะราคาโดยตรง เช่น 0.90 = $0.90"
+     )
+
+float buyBuffer =
+     input.float(
+         0.20,
+         "Buy Breakout Buffer",
+         minval = 0.0,
+         step = 0.01,
+         group = G_SR
+     )
+
+float sellBuffer =
+     input.float(
+         0.40,
+         "Sell Breakout Buffer",
+         minval = 0.0,
+         step = 0.01,
+         group = G_SR
+     )
+
+
+// ============================================================================
+// 3. VOLATILITY BREAKOUT
+// ============================================================================
+
+const string G_VOL = "03 — Volatility Breakout"
+
+int volCandles =
+     input.int(
+         1,
+         "Candles To Monitor",
+         minval = 1,
+         maxval = 20,
+         group = G_VOL
+     )
+
+int volAtrPeriod =
+     input.int(
+         21,
+         "ATR Period",
+         minval = 1,
+         group = G_VOL
+     )
+
+float devFactor =
+     input.float(
+         2.4,
+         "Deviation Factor",
+         minval = 0.1,
+         step = 0.1,
+         group = G_VOL
+     )
