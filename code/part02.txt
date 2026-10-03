@@ -1,0 +1,150 @@
+
+float minMove =
+     input.float(
+         0.0,
+         "Minimum Move",
+         minval = 0.0,
+         step = 0.01,
+         group = G_VOL
+     )
+
+
+// ============================================================================
+// 4. FALSE BREAKOUT FILTER
+// ============================================================================
+
+const string G_FB = "04 — Preventive False Breakout Filter"
+
+bool fbEnabled =
+     input.bool(
+         true,
+         "Enable Filter",
+         group = G_FB
+     )
+
+int trendMaPeriod =
+     input.int(
+         0,
+         "SMA Period — 0 disables",
+         minval = 0,
+         group = G_FB
+     )
+
+bool requireTrendAlignment =
+     input.bool(
+         false,
+         "Require Price / SMA Alignment",
+         group = G_FB
+     )
+
+bool requireTrendSlope =
+     input.bool(
+         false,
+         "Require SMA Slope",
+         group = G_FB
+     )
+
+int momentumBars =
+     input.int(
+         0,
+         "Momentum Bars",
+         minval = 0,
+         maxval = 20,
+         group = G_FB
+     )
+
+int minDirectionalBars =
+     input.int(
+         0,
+         "Minimum Directional Bars",
+         minval = 0,
+         maxval = 20,
+         group = G_FB
+     )
+
+float minBodyPercent =
+     input.float(
+         0.0,
+         "Minimum Candle Body %",
+         minval = 0.0,
+         maxval = 100.0,
+         step = 1.0,
+         group = G_FB
+     )
+
+float maxBreakoutWickBody =
+     input.float(
+         1.5,
+         "Maximum Breakout Wick / Body",
+         minval = 0.0,
+         step = 0.1,
+         group = G_FB,
+         tooltip = "0 disables this filter"
+     )
+
+
+// ============================================================================
+// 5. CONFIRMATION
+// ============================================================================
+
+const string G_CONFIRM = "05 — Higher-Timeframe Confirmation"
+
+bool useConfirm1 =
+     input.bool(
+         false,
+         "Enable Confirmation 1",
+         group = G_CONFIRM,
+         inline = "C1"
+     )
+
+string confirmTf1 =
+     input.timeframe(
+         "5",
+         "",
+         group = G_CONFIRM,
+         inline = "C1"
+     )
+
+bool useConfirm2 =
+     input.bool(
+         false,
+         "Enable Confirmation 2",
+         group = G_CONFIRM,
+         inline = "C2"
+     )
+
+string confirmTf2 =
+     input.timeframe(
+         "15",
+         "",
+         group = G_CONFIRM,
+         inline = "C2"
+     )
+
+bool useConfirm3 =
+     input.bool(
+         false,
+         "Enable Confirmation 3",
+         group = G_CONFIRM,
+         inline = "C3"
+     )
+
+string confirmTf3 =
+     input.timeframe(
+         "60",
+         "",
+         group = G_CONFIRM,
+         inline = "C3"
+     )
+
+
+// ============================================================================
+// 6. EXIT MANAGEMENT
+// ============================================================================
+
+const string G_EXIT = "06 — Exit Management"
+
+float stopDistance =
+     input.float(
+         11.50,
+         "Initial Stop Distance",
