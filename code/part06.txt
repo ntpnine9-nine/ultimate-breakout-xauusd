@@ -1,0 +1,150 @@
+             comment = "S/R Sell Breakout"
+        )
+
+
+// Cancel obsolete setups when no longer admissible.
+if engineMode == "Support / Resistance"
+    if not longSetupSR
+        strategy.cancel("LONG")
+
+    if not shortSetupSR
+        strategy.cancel("SHORT")
+
+
+// ============================================================================
+// 16. ORDERS — VOLATILITY BREAKOUT
+// ============================================================================
+
+if engineMode == "Volatility Breakout"
+    if longSetupVOL and strategy.position_size == 0
+        strategy.entry(
+             "LONG",
+             strategy.long,
+             comment = "Volatility Long"
+        )
+
+    if shortSetupVOL and strategy.position_size == 0
+        strategy.entry(
+             "SHORT",
+             strategy.short,
+             comment = "Volatility Short"
+        )
+
+
+// ============================================================================
+// 17. POSITION MANAGEMENT
+// ============================================================================
+
+var float longStop = na
+var float longTarget = na
+
+var float shortStop = na
+var float shortTarget = na
+
+
+// ----- LONG ---------------------------------------------------------------
+
+if strategy.position_size > 0
+
+    float entryPrice =
+         strategy.position_avg_price
+
+    if strategy.position_size[1] <= 0
+        longStop :=
+             entryPrice - stopDistance
+
+        longTarget :=
+             entryPrice + targetDistance
+
+
+    // Break-even
+    if useBreakEven and
+       high - entryPrice >= breakEvenStart
+
+        float beStop =
+             entryPrice + breakEvenExtra
+
+        longStop :=
+             na(longStop) ?
+             beStop :
+             math.max(longStop, beStop)
+
+
+    // Trailing
+    if useTrailing and
+       high - entryPrice >= trailStart
+
+        float trailingCandidate =
+             high - trailDistance
+
+        longStop :=
+             na(longStop) ?
+             trailingCandidate :
+             math.max(
+                 longStop,
+                 trailingCandidate
+             )
+
+
+    strategy.exit(
+         "LONG EXIT",
+         from_entry = "LONG",
+         stop = longStop,
+         limit = longTarget
+    )
+
+
+// Reset when long is gone
+if strategy.position_size <= 0
+    longStop := na
+    longTarget := na
+
+
+// ----- SHORT --------------------------------------------------------------
+
+if strategy.position_size < 0
+
+    float entryPrice =
+         strategy.position_avg_price
+
+    if strategy.position_size[1] >= 0
+        shortStop :=
+             entryPrice + stopDistance
+
+        shortTarget :=
+             entryPrice - targetDistance
+
+
+    // Break-even
+    if useBreakEven and
+       entryPrice - low >= breakEvenStart
+
+        float beStop =
+             entryPrice - breakEvenExtra
+
+        shortStop :=
+             na(shortStop) ?
+             beStop :
+             math.min(shortStop, beStop)
+
+
+    // Trailing
+    if useTrailing and
+       entryPrice - low >= trailStart
+
+        float trailingCandidate =
+             low + trailDistance
+
+        shortStop :=
+             na(shortStop) ?
+             trailingCandidate :
+             math.min(
+                 shortStop,
+                 trailingCandidate
+             )
+
+
+    strategy.exit(
+         "SHORT EXIT",
+         from_entry = "SHORT",
+         stop = shortStop,
