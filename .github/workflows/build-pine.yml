@@ -1,0 +1,36 @@
+name: Build combined Pine source
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'code/**'
+      - '.github/workflows/build-pine.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Build Pine file
+        shell: bash
+        run: cat code/part*.txt > Ultimate_Breakout_System_XAUUSD_Port_v0.1.pine
+
+      - name: Commit generated Pine file
+        shell: bash
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add Ultimate_Breakout_System_XAUUSD_Port_v0.1.pine
+          if git diff --cached --quiet; then
+            echo "Generated Pine source is already current."
+          else
+            git commit -m "Build combined Pine source"
+            git push
+          fi
