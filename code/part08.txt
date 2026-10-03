@@ -1,0 +1,123 @@
+    )
+
+    table.cell(
+         dashboard,
+         0,
+         1,
+         "Engine"
+    )
+
+    table.cell(
+         dashboard,
+         1,
+         1,
+         engineMode
+    )
+
+    table.cell(
+         dashboard,
+         0,
+         2,
+         "Resistance"
+    )
+
+    table.cell(
+         dashboard,
+         1,
+         2,
+         na(activeHigh) ?
+         "NA" :
+         str.tostring(
+             activeHigh,
+             format.mintick
+         )
+    )
+
+    table.cell(
+         dashboard,
+         0,
+         3,
+         "Support"
+    )
+
+    table.cell(
+         dashboard,
+         1,
+         3,
+         na(activeLow) ?
+         "NA" :
+         str.tostring(
+             activeLow,
+             format.mintick
+         )
+    )
+
+    table.cell(
+         dashboard,
+         0,
+         4,
+         "ATR"
+    )
+
+    table.cell(
+         dashboard,
+         1,
+         4,
+         str.tostring(
+             volAtr,
+             format.mintick
+         )
+    )
+
+    table.cell(
+         dashboard,
+         0,
+         5,
+         "Long Filter"
+    )
+
+    table.cell(
+         dashboard,
+         1,
+         5,
+         longFilter ?
+         "PASS" :
+         "BLOCK"
+    )
+
+    table.cell(
+         dashboard,
+         0,
+         6,
+         "Short Filter"
+    )
+
+    table.cell(
+         dashboard,
+         1,
+         6,
+         shortFilter ?
+         "PASS" :
+         "BLOCK"
+    )
+
+    table.cell(
+         dashboard,
+         0,
+         7,
+         "Position"
+    )
+
+    string positionText =
+         strategy.position_size > 0 ?
+         "LONG" :
+         strategy.position_size < 0 ?
+         "SHORT" :
+         "FLAT"
+
+    table.cell(
+         dashboard,
+         1,
+         7,
+         positionText
+    )
