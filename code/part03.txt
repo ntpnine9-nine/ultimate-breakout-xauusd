@@ -1,0 +1,150 @@
+         minval = 0.01,
+         step = 0.10,
+         group = G_EXIT
+     )
+
+float targetDistance =
+     input.float(
+         13.00,
+         "Initial Target Distance",
+         minval = 0.01,
+         step = 0.10,
+         group = G_EXIT
+     )
+
+bool useBreakEven =
+     input.bool(
+         true,
+         "Use Break-even",
+         group = G_EXIT
+     )
+
+float breakEvenStart =
+     input.float(
+         2.50,
+         "Break-even Trigger",
+         minval = 0.0,
+         step = 0.10,
+         group = G_EXIT
+     )
+
+float breakEvenExtra =
+     input.float(
+         0.0,
+         "Break-even Extra",
+         step = 0.10,
+         group = G_EXIT
+     )
+
+bool useTrailing =
+     input.bool(
+         true,
+         "Use Trailing Stop",
+         group = G_EXIT
+     )
+
+float trailStart =
+     input.float(
+         2.50,
+         "Trailing Start",
+         minval = 0.0,
+         step = 0.10,
+         group = G_EXIT
+     )
+
+float trailDistance =
+     input.float(
+         7.50,
+         "Trailing Distance",
+         minval = 0.01,
+         step = 0.10,
+         group = G_EXIT
+     )
+
+
+// ============================================================================
+// 7. SESSION
+// ============================================================================
+
+const string G_SESSION = "07 — Trading Session"
+
+bool useSession =
+     input.bool(
+         false,
+         "Use Session Filter",
+         group = G_SESSION
+     )
+
+string tradingSession =
+     input.session(
+         "0000-2359",
+         "Trading Session",
+         group = G_SESSION
+     )
+
+bool sessionOK =
+     not useSession or
+     not na(time(timeframe.period, tradingSession))
+
+
+// ============================================================================
+// 8. PIVOT ENGINE
+// ============================================================================
+
+float pivotHigh =
+     ta.pivothigh(
+         high,
+         leftStrength,
+         rightStrength
+     )
+
+float pivotLow =
+     ta.pivotlow(
+         low,
+         leftStrength,
+         rightStrength
+     )
+
+var float activeHigh = na
+var float activeLow = na
+
+var int activeHighBar = na
+var int activeLowBar = na
+
+if not na(pivotHigh)
+    activeHigh := pivotHigh
+    activeHighBar := bar_index - rightStrength
+
+if not na(pivotLow)
+    activeLow := pivotLow
+    activeLowBar := bar_index - rightStrength
+
+
+// ============================================================================
+// 9. PIVOT AGE
+// ============================================================================
+
+int highAge =
+     na(activeHighBar) ?
+     1000000 :
+     bar_index - activeHighBar
+
+int lowAge =
+     na(activeLowBar) ?
+     1000000 :
+     bar_index - activeLowBar
+
+bool highAgeOK =
+     highAge <= maxPivotAge
+
+bool lowAgeOK =
+     lowAge <= maxPivotAge
+
+
+// ============================================================================
+// 10. BREAKOUT LEVELS
+// ============================================================================
+
+float buyEntry =
+     na(activeHigh) ?
+     na :
