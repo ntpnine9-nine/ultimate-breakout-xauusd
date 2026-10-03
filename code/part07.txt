@@ -1,0 +1,150 @@
+         limit = shortTarget
+    )
+
+
+// Reset when short is gone
+if strategy.position_size >= 0
+    shortStop := na
+    shortTarget := na
+
+
+// ============================================================================
+// 18. VISUALS
+// ============================================================================
+
+plot(
+     engineMode == "Support / Resistance" ?
+     activeHigh :
+     na,
+     "Resistance Pivot",
+     style = plot.style_stepline,
+     linewidth = 2
+)
+
+plot(
+     engineMode == "Support / Resistance" ?
+     activeLow :
+     na,
+     "Support Pivot",
+     style = plot.style_stepline,
+     linewidth = 2
+)
+
+plot(
+     engineMode == "Support / Resistance" ?
+     buyEntry :
+     na,
+     "Buy Stop Level",
+     style = plot.style_linebr
+)
+
+plot(
+     engineMode == "Support / Resistance" ?
+     sellEntry :
+     na,
+     "Sell Stop Level",
+     style = plot.style_linebr
+)
+
+plot(
+     trendMaPeriod >= 2 ?
+     trendSma :
+     na,
+     "False-Breakout SMA"
+)
+
+
+// Entry markers
+
+plotshape(
+     longSetupSR,
+     title = "Long Setup",
+     style = shape.triangleup,
+     location = location.belowbar,
+     size = size.tiny,
+     text = "L"
+)
+
+plotshape(
+     shortSetupSR,
+     title = "Short Setup",
+     style = shape.triangledown,
+     location = location.abovebar,
+     size = size.tiny,
+     text = "S"
+)
+
+plotshape(
+     longSetupVOL,
+     title = "Volatility Long",
+     style = shape.circle,
+     location = location.belowbar,
+     size = size.tiny,
+     text = "VOL"
+)
+
+plotshape(
+     shortSetupVOL,
+     title = "Volatility Short",
+     style = shape.circle,
+     location = location.abovebar,
+     size = size.tiny,
+     text = "VOL"
+)
+
+
+// ============================================================================
+// 19. ALERTS
+// ============================================================================
+
+alertcondition(
+     longSetupSR,
+     "UBS Long Breakout Setup",
+     "Ultimate Breakout System: LONG breakout setup"
+)
+
+alertcondition(
+     shortSetupSR,
+     "UBS Short Breakout Setup",
+     "Ultimate Breakout System: SHORT breakout setup"
+)
+
+alertcondition(
+     longSetupVOL,
+     "UBS Volatility Long",
+     "Ultimate Breakout System: bullish volatility breakout"
+)
+
+alertcondition(
+     shortSetupVOL,
+     "UBS Volatility Short",
+     "Ultimate Breakout System: bearish volatility breakout"
+)
+
+
+// ============================================================================
+// 20. STATUS PANEL
+// ============================================================================
+
+var table dashboard =
+     table.new(
+         position.top_right,
+         2,
+         8,
+         border_width = 1
+     )
+
+if barstate.islast
+
+    table.cell(
+         dashboard,
+         0,
+         0,
+         "ULTIMATE BREAKOUT"
+    )
+
+    table.cell(
+         dashboard,
+         1,
+         0,
+         "XAU PORT"
